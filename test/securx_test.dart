@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:securx/securx.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:securx/securx.dart';
 import 'package:securx/securx_method_channel.dart';
 import 'package:securx/securx_platform_interface.dart';
 
@@ -43,6 +43,18 @@ class MockSecurxPlatform with MockPlatformInterfaceMixin implements SecurxPlatfo
 
   @override
   Future<bool?> isAppCloned({required String applicationID}) async => false;
+
+  @override
+  Future<String?> getAppSignature() async => 'mock_signature';
+
+  @override
+  Future<void> setIOSBackgroundProtection({
+    required dynamic style,
+    String? assetImage,
+    String? color,
+  }) async {
+    return;
+  }
 }
 
 void main() {

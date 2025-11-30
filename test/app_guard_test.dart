@@ -43,6 +43,18 @@ class MockSecurxPlatform with MockPlatformInterfaceMixin implements SecurxPlatfo
 
   @override
   Future<bool?> isAppCloned({required String applicationID}) async => false;
+
+  @override
+  Future<String?> getAppSignature() async => 'mock_signature';
+
+  @override
+  Future<void> setIOSBackgroundProtection({
+    required dynamic style,
+    String? assetImage,
+    String? color,
+  }) async {
+    return;
+  }
 }
 
 void main() {

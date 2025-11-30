@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 import 'securx_platform_interface.dart';
 
 class Securx {
@@ -9,7 +7,7 @@ class Securx {
   /// Manages the clipboard protection state for your UI to listen to.
   ///
   /// `true` means copy/paste should be disabled.
-  final ValueNotifier<bool> isClipboardProtected = ValueNotifier(false);
+  // final ValueNotifier<bool> isClipboardProtected = ValueNotifier(false);
 
   /// Initializes the Securx plugin.
   ///
@@ -19,11 +17,11 @@ class Securx {
   Securx({
     required this.applicationID,
     bool initialScreenshotProtection = false,
-    bool initialClipboardProtection = false,
+    // bool initialClipboardProtection = false,
   }) {
     // Set initial protection states from the constructor
     setScreenshotProtection(enabled: initialScreenshotProtection);
-    setClipboardProtection(enabled: initialClipboardProtection);
+    // setClipboardProtection(enabled: initialClipboardProtection);
   }
 
   /// Toggles screenshot and screen recording protection.
@@ -50,9 +48,9 @@ class Securx {
   /// Pass `false` to **disable** protection (allow copy/paste).
   ///
   /// This updates the [isClipboardProtected] notifier, which you can use in your UI.
-  void setClipboardProtection({required bool enabled}) {
-    isClipboardProtected.value = enabled;
-  }
+  // void setClipboardProtection({required bool enabled}) {
+  //   isClipboardProtected.value = enabled;
+  // }
 
   /// Checks if the app is cloned (Android only).
   ///
@@ -65,8 +63,7 @@ class Securx {
   ///
   /// Returns a string representing the platform version if successful, otherwise
   /// returns null.
-  Future<String?> get getPlatformVersion =>
-      SecurxPlatform.instance.getPlatformVersion();
+  Future<String?> get getPlatformVersion => SecurxPlatform.instance.getPlatformVersion();
 
   /// Checks if the device is Rooted for Android
   /// Checks if the device is Jailbroken for iOS
@@ -90,15 +87,13 @@ class Securx {
   ///
   /// Returns a boolean indicating whether debugging mode is enabled.
   /// If the platform does not support this operation, it returns null.
-  Future<bool?> get isDebuggingModeEnabled =>
-      SecurxPlatform.instance.isDebuggingModeEnable();
+  Future<bool?> get isDebuggingModeEnabled => SecurxPlatform.instance.isDebuggingModeEnable();
 
   /// Checks if the device developer mode (Only works on Android)
   ///
   /// Returns a boolean indicating whether developer mode is enabled.
   /// If the platform does not support this operation, it returns null.
-  Future<bool?> get isDeveloperModeEnabled =>
-      SecurxPlatform.instance.isDeveloperModeEnabled();
+  Future<bool?> get isDeveloperModeEnabled => SecurxPlatform.instance.isDeveloperModeEnabled();
 
   /// Checks if the device is an emulator.
   ///
@@ -111,6 +106,48 @@ class Securx {
   /// Returns a boolean indicating whether a VPN is enabled.
   /// If the platform does not support this operation, it returns null.
   Future<bool?> get isVpnEnabled => SecurxPlatform.instance.isVpnEnabled();
-  Future<bool?> get isDebuggerAttached =>
-      SecurxPlatform.instance.isDebuggerAttached();
+  Future<bool?> get isDebuggerAttached => SecurxPlatform.instance.isDebuggerAttached();
+
+  /// Retrieves the SHA-256 hash of the app's signing certificate.
+  ///
+  /// Returns `null` if the platform does not support this operation or if the signature cannot be retrieved.
+  Future<String?> getAppSignature() => SecurxPlatform.instance.getAppSignature();
+
+  /// Verifies if the app's signing certificate matches the expected hash.
+  ///
+  /// [expectedHash] is the SHA-256 hash you expect the app to be signed with.
+  /// Returns `true` if the signature matches, `false` otherwise.
+  Future<bool> verifyAppSignature({required String expectedHash}) async {
+    final signature = await getAppSignature();
+    return signature == expectedHash;
+  }
+
+  /// Configures the background protection style for iOS.
+  ///
+  /// [style] determines the type of protection:
+  /// - [BackgroundProtectionStyle.blur]: Blurs the app screen in the app switcher.
+  /// - [BackgroundProtectionStyle.color]: Displays a solid color. Requires [color] (hex string, e.g., "#FFFFFF").
+  /// - [BackgroundProtectionStyle.image]: Displays an image. Requires [assetImage] (name of the image in Assets).
+  /// - [BackgroundProtectionStyle.none]: Disables background protection.
+  ///
+  /// Note: This is an iOS-only feature. It does nothing on Android.
+  Future<void> setIOSBackgroundProtection({
+    required BackgroundProtectionStyle style,
+    String? assetImage,
+    String? color,
+  }) {
+    return SecurxPlatform.instance.setIOSBackgroundProtection(
+      style: style,
+      assetImage: assetImage,
+      color: color,
+    );
+  }
+}
+
+/// Styles for iOS background protection in the App Switcher.
+enum BackgroundProtectionStyle {
+  blur,
+  color,
+  image,
+  none,
 }
