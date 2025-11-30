@@ -35,4 +35,3 @@ build/
 # FVM Version Cache
 .fvm/
 .vscode/settings.json
-.fvmrc
