@@ -12,6 +12,10 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import android.content.pm.PackageManager
+import android.content.pm.Signature
+import java.security.MessageDigest
+
 
 /** SexurxPlugin */
 // Implement ActivityAware to get access to the Activity
@@ -89,6 +93,9 @@ class SecurxPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
                     result.error("UNAVAILABLE", "Activity not available for app clone check.", null)
                 }
             }
+            "getAppSignature" -> {
+                result.success(getAppSignature(currentContext))
+            }
             else -> {
                 result.notImplemented()
             }
@@ -115,6 +122,39 @@ class SecurxPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
             ) != 0
         } else {
             return false
+        }
+    }
+
+    private fun getAppSignature(context: Context): String? {
+        try {
+            val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_SIGNING_CERTIFICATES)
+            } else {
+                @Suppress("DEPRECATION")
+                context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES)
+            }
+
+            val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                if (packageInfo.signingInfo.hasMultipleSigners()) {
+                    packageInfo.signingInfo.apkContentsSigners
+                } else {
+                    packageInfo.signingInfo.signingCertificateHistory
+                }
+            } else {
+                @Suppress("DEPRECATION")
+                packageInfo.signatures
+            }
+
+            if (signatures == null || signatures.isEmpty()) return null
+
+            // We return the hash of the first signature
+            val signature = signatures[0]
+            val md = MessageDigest.getInstance("SHA-256")
+            val digest = md.digest(signature.toByteArray())
+            return digest.joinToString("") { "%02x".format(it) }
+        } catch (e: Exception) {
+            Log.e("Securx", "Error getting app signature", e)
+            return null
         }
     }
 

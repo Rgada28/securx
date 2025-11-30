@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:securx/securx.dart';
-import 'package:securx/app_guard_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:securx/securx.dart';
+import 'package:securx/securx_method_channel.dart';
 import 'package:securx/securx_platform_interface.dart';
 
 class MockSecurxPlatform with MockPlatformInterfaceMixin implements SecurxPlatform {
@@ -43,6 +43,18 @@ class MockSecurxPlatform with MockPlatformInterfaceMixin implements SecurxPlatfo
 
   @override
   Future<bool?> isAppCloned({required String applicationID}) async => false;
+
+  @override
+  Future<String?> getAppSignature() async => 'mock_signature';
+
+  @override
+  Future<void> setIOSBackgroundProtection({
+    required dynamic style,
+    String? assetImage,
+    String? color,
+  }) async {
+    return;
+  }
 }
 
 void main() {
@@ -57,52 +69,52 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    Securx securxPlugin = Securx(applicationID: 'com.security.flutter_app_guard');
+    Securx securxPlugin = Securx(applicationID: 'com.security.securx');
     expect(await securxPlugin.getPlatformVersion, '42');
   });
 
   test('isDeviceRooted returns false', () async {
-    Securx securxPlugin = Securx(applicationID: 'com.security.flutter_app_guard');
+    Securx securxPlugin = Securx(applicationID: 'com.security.securx');
     expect(await securxPlugin.isDeviceRooted, false);
   });
 
   test('isDeviceSafe returns true', () async {
-    Securx securxPlugin = Securx(applicationID: 'com.security.flutter_app_guard');
+    Securx securxPlugin = Securx(applicationID: 'com.security.securx');
     expect(await securxPlugin.isDeviceSafe, true);
   });
 
   test('isDebuggingModeEnabled returns false', () async {
-    Securx securxPlugin = Securx(applicationID: 'com.security.flutter_app_guard');
+    Securx securxPlugin = Securx(applicationID: 'com.security.securx');
     expect(await securxPlugin.isDebuggingModeEnabled, false);
   });
 
   test('isDeveloperModeEnabled returns false', () async {
-    Securx securxPlugin = Securx(applicationID: 'com.security.flutter_app_guard');
+    Securx securxPlugin = Securx(applicationID: 'com.security.securx');
     expect(await securxPlugin.isDeveloperModeEnabled, false);
   });
 
   test('isEmulator returns false', () async {
-    Securx securxPlugin = Securx(applicationID: 'com.security.flutter_app_guard');
+    Securx securxPlugin = Securx(applicationID: 'com.security.securx');
     expect(await securxPlugin.isEmulator, false);
   });
 
   test('isVpnEnabled returns true', () async {
-    Securx securxPlugin = Securx(applicationID: 'com.security.flutter_app_guard');
+    Securx securxPlugin = Securx(applicationID: 'com.security.securx');
     expect(await securxPlugin.isVpnEnabled, true);
   });
 
   test('isDebuggerAttached returns false', () async {
-    Securx securxPlugin = Securx(applicationID: 'com.security.flutter_app_guard');
+    Securx securxPlugin = Securx(applicationID: 'com.security.securx');
     expect(await securxPlugin.isDebuggerAttached, false);
   });
 
   test('isAppCloned returns false', () async {
-    Securx securxPlugin = Securx(applicationID: 'com.security.flutter_app_guard');
+    Securx securxPlugin = Securx(applicationID: 'com.security.securx');
     expect(await securxPlugin.isAppCloned, false);
   });
 
   test('setScreenshotProtection does not throw', () async {
-    Securx securxPlugin = Securx(applicationID: 'com.security.flutter_app_guard');
+    Securx securxPlugin = Securx(applicationID: 'com.security.securx');
     await securxPlugin.setScreenshotProtection(enabled: true);
     await securxPlugin.setScreenshotProtection(enabled: false);
     expect(true, isTrue);

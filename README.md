@@ -2,8 +2,8 @@
 # Securx - A Security Analysis Package
 
 [![pub package](https://img.shields.io/pub/v/securx.svg)](https://pub.dev/packages/securx)
-[![pub points](https://badges.bar/securx/pub%20points)](https://pub.dev/packages/securx/score)
-[![likes](https://badges.bar/securx/likes)](https://pub.dev/packages/securx/score)
+[![Maintenance](https://img.shields.io/maintenance/yes/2025)](https://pub.dev/packages/securx/score)
+[![points](https://img.shields.io/pub/points/securx)](https://pub.dev/packages/securx/score)
 
 
 A robust mobile security package designed to enhance application resilience against various threats. This package includes features for device integrity checks, secure communication, mobile privacy, and fraud prevention.
@@ -46,9 +46,7 @@ A robust mobile security package designed to enhance application resilience agai
     - **Severity**: Medium
     - **Benefits**: Secures sensitive visual data.
 
-- **Copy-Paste Prevention**: (coming soon) Prevents sensitive data from being copied to the clipboard.
-    - **Severity**: Medium
-    - **Benefits**: Ensures confidentiality of sensitive information.
+
 
 - **Screen Sharing Prevention**: Restricts unauthorized screen sharing.
     - **Severity**: Medium
@@ -69,40 +67,122 @@ flutter pub add securx
 
 ## Usage
 
-Here’s an example of how to initialize and use the package in your app:
+### Initialization
+Initialize the plugin with your application ID. You can also set initial protection states.
 
-### Flutter Example
-
-Import the Security Analysis package
-```bash
+```dart
 import 'package:securx/securx.dart';
+
+final _securxPlugin = Securx(
+  applicationID: "com.example.yourapp",
+  initialScreenshotProtection: true, // Block screenshots on startup
+  // initialClipboardProtection: true,  // Block copy/paste on startup
+);
 ```
 
-Initialize the Security Analysis package
-```bash
-final _secuxPlugin = Securx(
-  applicationID: "com.security.securx",
-  initialScreenshotProtection: false,
+### Device Integrity Checks
+Check if the device is safe to run your application.
+
+```dart
+// Comprehensive check (Root, Emulator, Debugger, etc.)
+bool? isSafe = await _securxPlugin.isDeviceSafe;
+
+if (!isSafe) {
+  // Handle unsafe device
+}
+
+// Individual checks
+bool? isRooted = await _securxPlugin.isDeviceRooted;
+bool? isEmulator = await _securxPlugin.isEmulator;
+bool? isDebuggerAttached = await _securxPlugin.isDebuggerAttached;
+```
+
+### App Integrity (Tamper Verification)
+Verify that your app hasn't been modified or resigned by an attacker.
+
+```dart
+// 1. Get the signature hash (SHA-256) of the current app
+String? currentSignature = await _securxPlugin.getAppSignature();
+print("App Signature: $currentSignature");
+
+// 2. Verify against your known good hash (store this securely!)
+bool isValid = await _securxPlugin.verifyAppSignature(
+  expectedHash: "YOUR_EXPECTED_SHA256_HASH_HERE",
 );
 
-// To control screenshot protection after initialization
-_appGuardPlugin.setScreenshotProtection(enabled: true); // true = restricted
+if (!isValid) {
+  // App has been tampered with!
+}
+```
+
+### Screen Protection
+Prevent sensitive data from being captured via screenshots or screen recording.
+
+```dart
+// Enable protection (prevent screenshots)
+await _securxPlugin.setScreenshotProtection(enabled: true);
+
+// Disable protection (allow screenshots)
+await _securxPlugin.setScreenshotProtection(enabled: false);
+```
+
+### iOS Background Protection
+Customize how your app appears in the iOS App Switcher to hide sensitive content.
+
+```dart
+// Blur the screen
+await _securxPlugin.setIOSBackgroundProtection(
+  style: BackgroundProtectionStyle.blur,
+);
+
+// Show a solid color (e.g., Red)
+await _securxPlugin.setIOSBackgroundProtection(
+  style: BackgroundProtectionStyle.color,
+  color: "#FF0000",
+);
+
+// Show a custom image from Assets
+await _securxPlugin.setIOSBackgroundProtection(
+  style: BackgroundProtectionStyle.image,
+  assetImage: "launch_image", // Name of the image in your asset bundle
+);
+
+// Disable background protection
+await _securxPlugin.setIOSBackgroundProtection(
+  style: BackgroundProtectionStyle.none,
+);
+```
+
+
+
+### Other Security Checks
+
+```dart
+// Check for VPN
+bool? isVpnActive = await _securxPlugin.isVpnEnabled;
+
+// Check for App Cloning (Android only)
+bool? isCloned = await _securxPlugin.isAppCloned;
+
+// Check Developer Mode / Debugging (Android)
+bool? isDevMode = await _securxPlugin.isDeveloperModeEnabled;
+bool? isDebugging = await _securxPlugin.isDebuggingModeEnabled;
 ```
 
 ## Compatibility
 
-| Feature                             | Android | iOS  | 
-| ----------------------------------- | :-----: | :--: | 
-| Root / Jailbreak Detection          |   ✅    |   ✅  | 
-| Emulator Detection                  |   ✅    |   ✅  | 
-| Debugger Detection                  |   ✅    |   ✅  | 
-| Malicious Root App Detection        |   ✅    |   ❌  | 
-| ADB Debugging Detection             |   ✅    |   ❌  | 
-| Developer Mode Detection            |   ✅    |   ❌  | 
-| VPN Detection                       |   ✅    |   ✅  | 
-| Screen Capturing Prevention         |   ✅    |   ✅  | 
-| Screen Share Prevention             |   ✅    |   ✅  | 
-| App Cloning/Second Space Detection  |   ✅    |   ❌  | 
-<!-- | Copy-Paste Prevention               |   ✅    |   ✅  |  -->
-
+| Feature                             | Android | iOS  |
+| ----------------------------------- | :-----: | :--: |
+| Root / Jailbreak Detection          |   ✅    |   ✅  |
+| Emulator Detection                  |   ✅    |   ✅  |
+| Debugger Detection                  |   ✅    |   ✅  |
+| Tamper Verification (Signature)     |   ✅    |   ✅  |
+| Malicious Root App Detection        |   ✅    |   ❌  |
+| ADB Debugging Detection             |   ✅    |   ❌  |
+| Developer Mode Detection            |   ✅    |   ❌  |
+| VPN Detection                       |   ✅    |   ✅  |
+| Screen Capturing Prevention         |   ✅    |   ✅  |
+| iOS Background Protection           |   ❌    |   ✅  |
+| Screen Share Prevention             |   ✅    |   ✅  |
+| App Cloning/Second Space Detection  |   ✅    |   ❌  |
 

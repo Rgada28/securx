@@ -13,7 +13,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool _copyPasteEnable = true, _isScreenshotEnabled = false;
+  bool _isScreenshotEnabled = false;
+  // bool _copyPasteEnable = true;
 
   // State variables for async values
   String? _platformVersion;
@@ -25,10 +26,11 @@ class _MyAppState extends State<MyApp> {
   bool? _isVpnEnabled;
   bool? _isDebuggerAttached;
   bool? _isAppCloned;
+  String? _appSignature;
 
   final _secuxPlugin = Securx(
     applicationID: "com.security.securx.securx",
-    initialClipboardProtection: true,
+    // initialClipboardProtection: true,
   );
 
   @override
@@ -37,13 +39,13 @@ class _MyAppState extends State<MyApp> {
     _fetchDeviceSecurityInfo();
 
     // Set initial copy/paste state from plugin
-    _copyPasteEnable = !_secuxPlugin.isClipboardProtected.value;
+    // _copyPasteEnable = !_secuxPlugin.isClipboardProtected.value;
 
-    _secuxPlugin.isClipboardProtected.addListener(() {
-      setState(() {
-        _copyPasteEnable = !_secuxPlugin.isClipboardProtected.value;
-      });
-    });
+    // _secuxPlugin.isClipboardProtected.addListener(() {
+    //   setState(() {
+    //     _copyPasteEnable = !_secuxPlugin.isClipboardProtected.value;
+    //   });
+    // });
 
     // Ensure screenshot protection is set after activity is ready and update UI state
     // Initially, screenshot protection is enabled (restricted).
@@ -60,6 +62,7 @@ class _MyAppState extends State<MyApp> {
     final isVpnEnabled = await _secuxPlugin.isVpnEnabled;
     final isDebuggerAttached = await _secuxPlugin.isDebuggerAttached;
     final isAppCloned = await _secuxPlugin.isAppCloned;
+    final appSignature = await _secuxPlugin.getAppSignature();
 
     setState(() {
       _platformVersion = platformVersion;
@@ -71,6 +74,7 @@ class _MyAppState extends State<MyApp> {
       _isVpnEnabled = isVpnEnabled;
       _isDebuggerAttached = isDebuggerAttached;
       _isAppCloned = isAppCloned;
+      _appSignature = appSignature;
     });
   }
 
@@ -100,22 +104,56 @@ class _MyAppState extends State<MyApp> {
                 Text('Is Screenshot Enabled: $_isScreenshotEnabled'),
                 Text('Is Debugger Attached: ${_isDebuggerAttached ?? "loading..."}'),
                 Text('Is App Cloned: ${_isAppCloned ?? "loading..."}'),
-                ValueListenableBuilder<bool>(
-                  valueListenable: _secuxPlugin.isClipboardProtected,
-                  builder: (context, value, _) => Text('Is Copy paste Enabled: ${!value}'),
-                ),
+                Text('App Signature: ${_appSignature ?? "loading..."}'),
                 const Divider(),
-                ListTile(
-                  title: const Text("Clipboard Protection"),
-                  subtitle: !_copyPasteEnable ? const Text("Enabled") : const Text("Disabled"),
-                  trailing: Switch.adaptive(
-                    value: !_copyPasteEnable,
-                    onChanged: (value) {
-                      _copyPasteEnable = !_copyPasteEnable;
-                      setState(() {});
-                    },
-                  ),
+                const Text("iOS Background Protection"),
+                Wrap(
+                  spacing: 8,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => _secuxPlugin.setIOSBackgroundProtection(
+                        style: BackgroundProtectionStyle.blur,
+                      ),
+                      child: const Text("Blur"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => _secuxPlugin.setIOSBackgroundProtection(
+                        style: BackgroundProtectionStyle.color,
+                        color: "#FF0000",
+                      ),
+                      child: const Text("Red"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => _secuxPlugin.setIOSBackgroundProtection(
+                        style: BackgroundProtectionStyle.image,
+                        assetImage: "launch_image",
+                      ),
+                      child: const Text("Image"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => _secuxPlugin.setIOSBackgroundProtection(
+                        style: BackgroundProtectionStyle.none,
+                      ),
+                      child: const Text("None"),
+                    ),
+                  ],
                 ),
+                // ValueListenableBuilder<bool>(
+                //   valueListenable: _secuxPlugin.isClipboardProtected,
+                //   builder: (context, value, _) => Text('Is Copy paste Enabled: ${!value}'),
+                // ),
+                const Divider(),
+                // ListTile(
+                //   title: const Text("Clipboard Protection"),
+                //   subtitle: !_copyPasteEnable ? const Text("Enabled") : const Text("Disabled"),
+                //   trailing: Switch.adaptive(
+                //     value: !_copyPasteEnable,
+                //     onChanged: (value) {
+                //       _copyPasteEnable = !_copyPasteEnable;
+                //       setState(() {});
+                //     },
+                //   ),
+                // ),
                 SizedBox(
                   height: 80,
                   child: TextField(
@@ -123,16 +161,16 @@ class _MyAppState extends State<MyApp> {
                       label: Text("TextField"),
                       border: OutlineInputBorder(),
                     ),
-                    enableInteractiveSelection: _copyPasteEnable,
-                    contextMenuBuilder: _copyPasteEnable
-                        ? (context, editableTextState) {
-                            final buttonItems = editableTextState.contextMenuButtonItems;
-                            return AdaptiveTextSelectionToolbar.buttonItems(
-                              anchors: editableTextState.contextMenuAnchors,
-                              buttonItems: buttonItems,
-                            );
-                          }
-                        : null,
+                    // enableInteractiveSelection: _copyPasteEnable,
+                    // contextMenuBuilder: _copyPasteEnable
+                    //     ? (context, editableTextState) {
+                    //         final buttonItems = editableTextState.contextMenuButtonItems;
+                    //         return AdaptiveTextSelectionToolbar.buttonItems(
+                    //           anchors: editableTextState.contextMenuAnchors,
+                    //           buttonItems: buttonItems,
+                    //         );
+                    //       }
+                    //     : null,
                   ),
                 ),
                 ListTile(

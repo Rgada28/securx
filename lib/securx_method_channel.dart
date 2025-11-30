@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'securx_constant.dart';
 
+import 'securx_constant.dart';
 import 'securx_platform_interface.dart';
 
 /// An implementation of [SecurxPlatform] that uses method channels.
@@ -88,11 +88,31 @@ class MethodChannelSecurx extends SecurxPlatform {
   }
 
   @override
+  @override
   Future<bool?> isAppCloned({required String applicationID}) async {
     // Pass the applicationID to the native side.
     final isCloned = await methodChannel.invokeMethod<bool>('isAppCloned', {
       'applicationID': applicationID,
     });
     return isCloned;
+  }
+
+  @override
+  Future<String?> getAppSignature() async {
+    final signature = await methodChannel.invokeMethod<String>('getAppSignature');
+    return signature;
+  }
+
+  @override
+  Future<void> setIOSBackgroundProtection({
+    required dynamic style,
+    String? assetImage,
+    String? color,
+  }) async {
+    await methodChannel.invokeMethod<void>('setIOSBackgroundProtection', {
+      'style': style.toString().split('.').last, // Send enum name as string
+      'assetImage': assetImage,
+      'color': color,
+    });
   }
 }

@@ -1,6 +1,6 @@
-# app_guard_example
+# securx_example
 
-Demonstrates how to use the flutter_app_guard plugin.
+Demonstrates how to use the securx plugin.
 
 ## Getting Started
 

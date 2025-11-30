@@ -30,12 +30,16 @@ void main() {
     expect(safe, isA<bool?>());
   });
 
-  testWidgets('isDebuggingModeEnabled returns bool', (WidgetTester tester) async {
+  testWidgets('isDebuggingModeEnabled returns bool', (
+    WidgetTester tester,
+  ) async {
     final bool? debug = await plugin.isDebuggingModeEnabled;
     expect(debug, isA<bool?>());
   });
 
-  testWidgets('isDeveloperModeEnabled returns bool', (WidgetTester tester) async {
+  testWidgets('isDeveloperModeEnabled returns bool', (
+    WidgetTester tester,
+  ) async {
     final bool? dev = await plugin.isDeveloperModeEnabled;
     expect(dev, isA<bool?>());
   });
@@ -60,7 +64,9 @@ void main() {
     expect(cloned, isA<bool?>());
   });
 
-  testWidgets('setScreenshotProtection does not throw', (WidgetTester tester) async {
+  testWidgets('setScreenshotProtection does not throw', (
+    WidgetTester tester,
+  ) async {
     await plugin.setScreenshotProtection(enabled: true); // disables screenshots
     await plugin.setScreenshotProtection(enabled: false); // enables screenshots
     // No exception means pass

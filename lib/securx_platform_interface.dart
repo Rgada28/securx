@@ -66,4 +66,17 @@ abstract class SecurxPlatform extends PlatformInterface {
   Future<bool?> isAppCloned({required String applicationID}) {
     throw UnimplementedError('isAppCloned() has not been implemented.');
   }
+
+  Future<String?> getAppSignature() {
+    throw UnimplementedError('getAppSignature() has not been implemented.');
+  }
+
+  Future<void> setIOSBackgroundProtection({
+    required dynamic
+        style, // Using dynamic to avoid circular dependency or import issues if enum is in main file
+    String? assetImage,
+    String? color,
+  }) {
+    throw UnimplementedError('setIOSBackgroundProtection() has not been implemented.');
+  }
 }

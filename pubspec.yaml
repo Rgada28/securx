@@ -1,6 +1,6 @@
 name: securx
-description: "A robust mobile security package designed to enhance application resilience against various threats. This package includes features for device integrity checks, secure communication, mobile privacy, and fraud prevention."
-version: 0.0.1
+description: "A mobile security package enhancing app resilience with device integrity checks, secure communication, mobile privacy controls, and fraud prevention."
+version: 0.0.2
 
 homepage: https://github.com/Rgada28/securx
 repository: https://github.com/Rgada28/securx
@@ -11,7 +11,7 @@ license: BSD-3-Clause
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
-  flutter: '>=3.3.0'
+  flutter: '>=3.35.7'
 
 dependencies:
   flutter:
@@ -25,7 +25,7 @@ dev_dependencies:
 
 topics:
   - security
-  - app-guard
+  - securx
   - android
   - ios
 

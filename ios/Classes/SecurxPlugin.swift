@@ -1,7 +1,12 @@
 import Flutter
 import UIKit
 import DTTJailbreakDetection
+import DTTJailbreakDetection
 import ScreenProtectorKit
+import CryptoKit
+import Security
+import CommonCrypto
+
 
 public class SecurxPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -37,10 +42,72 @@ public class SecurxPlugin: NSObject, FlutterPlugin {
             result(isDebuggerAttached)
         case "isAppCloned":
             result(false)
+        case "getAppSignature":
+            result(getAppSignature())
+        case "setIOSBackgroundProtection":
+            handleSetIOSBackgroundProtection(call, result: result, screenProtectorKit: screenProtectorKit)
         default:
             result(FlutterMethodNotImplemented)
         }
     }
+
+    private func handleSetIOSBackgroundProtection(_ call: FlutterMethodCall, result: @escaping FlutterResult, screenProtectorKit: ScreenProtectorKit) {
+        guard let args = call.arguments as? [String: Any],
+              let style = args["style"] as? String else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Missing style", details: nil))
+            return
+        }
+
+        switch style {
+        case "blur":
+            screenProtectorKit.enabledBlurScreen()
+        case "color":
+            if let colorHex = args["color"] as? String {
+                screenProtectorKit.enabledColorScreen(hexColor: colorHex)
+            }
+        case "image":
+            if let imageName = args["assetImage"] as? String {
+                screenProtectorKit.enabledImageScreen(named: imageName)
+            }
+        case "none":
+            screenProtectorKit.disableBlurScreen()
+            screenProtectorKit.disableColorScreen()
+            screenProtectorKit.disableImageScreen()
+        default:
+            break
+        }
+        result(nil)
+    }
+
+    private func getAppSignature() -> String? {
+        var code: SecCode?
+        if SecCodeCopySelf([], &code) != errSecSuccess { return nil }
+        guard let validCode = code else { return nil }
+
+        var info: CFDictionary?
+        if SecCodeCopySigningInformation(validCode, [], &info) != errSecSuccess { return nil }
+
+        guard let validInfo = info as? [String: Any],
+              let certificates = validInfo[kSecCodeInfoCertificates as String] as? [SecCertificate],
+              let firstCert = certificates.first else {
+            return nil
+        }
+
+        let data = SecCertificateCopyData(firstCert) as Data
+        
+        if #available(iOS 13.0, *) {
+            let digest = SHA256.hash(data: data)
+            return digest.map { String(format: "%02x", $0) }.joined()
+        } else {
+            // Fallback for iOS 12
+            var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+            data.withUnsafeBytes {
+                _ = CC_SHA256($0.baseAddress, CC_LONG(data.count), &hash)
+            }
+            return hash.map { String(format: "%02x", $0) }.joined()
+        }
+    }
+
     
     private func isDeviceSafe() -> Bool {
         return !isJailBroken()

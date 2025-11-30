@@ -64,7 +64,7 @@ We welcome pull requests for bug fixes, new features, and improvements. To submi
     ```bash
     git push origin feature/your-feature-name-or-bugfix/issue-number
     ```
-8.  **Open a Pull Request** on the `app_guard` repository's main branch.
+8.  **Open a Pull Request** on the `securx` repository's main branch.
     - Provide a clear title and description for your PR.
     - Reference any related issues (e.g., `Closes #123`).
 

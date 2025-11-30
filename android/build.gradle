@@ -1,4 +1,4 @@
-group = "com.security.flutter_app_guard.flutter_app_guard"
+group = "com.security.securx.securx"
 version = "1.0-SNAPSHOT"
 
 buildscript {
@@ -25,7 +25,7 @@ apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 
 android {
-    namespace = "com.security.flutter_app_guard.flutter_app_guard"
+    namespace = "com.security.securx.securx"
 
     compileSdk = 34
 
