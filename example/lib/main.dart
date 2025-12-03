@@ -126,7 +126,7 @@ class _MyAppState extends State<MyApp> {
                     ElevatedButton(
                       onPressed: () => _secuxPlugin.setIOSBackgroundProtection(
                         style: BackgroundProtectionStyle.image,
-                        assetImage: "launch_image",
+                        assetImage: "LaunchImage",
                       ),
                       child: const Text("Image"),
                     ),
@@ -138,22 +138,9 @@ class _MyAppState extends State<MyApp> {
                     ),
                   ],
                 ),
-                // ValueListenableBuilder<bool>(
-                //   valueListenable: _secuxPlugin.isClipboardProtected,
-                //   builder: (context, value, _) => Text('Is Copy paste Enabled: ${!value}'),
-                // ),
+
                 const Divider(),
-                // ListTile(
-                //   title: const Text("Clipboard Protection"),
-                //   subtitle: !_copyPasteEnable ? const Text("Enabled") : const Text("Disabled"),
-                //   trailing: Switch.adaptive(
-                //     value: !_copyPasteEnable,
-                //     onChanged: (value) {
-                //       _copyPasteEnable = !_copyPasteEnable;
-                //       setState(() {});
-                //     },
-                //   ),
-                // ),
+
                 SizedBox(
                   height: 80,
                   child: TextField(
@@ -161,16 +148,6 @@ class _MyAppState extends State<MyApp> {
                       label: Text("TextField"),
                       border: OutlineInputBorder(),
                     ),
-                    // enableInteractiveSelection: _copyPasteEnable,
-                    // contextMenuBuilder: _copyPasteEnable
-                    //     ? (context, editableTextState) {
-                    //         final buttonItems = editableTextState.contextMenuButtonItems;
-                    //         return AdaptiveTextSelectionToolbar.buttonItems(
-                    //           anchors: editableTextState.contextMenuAnchors,
-                    //           buttonItems: buttonItems,
-                    //         );
-                    //       }
-                    //     : null,
                   ),
                 ),
                 ListTile(
